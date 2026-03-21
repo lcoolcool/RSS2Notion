@@ -1,0 +1,19 @@
+[project]
+name = "rss2notion"
+version = "0.1.0"
+description = "将 RSS 订阅内容自动同步到 Notion 数据库"
+requires-python = ">=3.14"
+dependencies = [
+    "feedparser>=6.0",
+    "markdownify>=0.14",
+    "mistletoe>=1.4",
+    "requests>=2.32",
+    "beautifulsoup4>=4.12",
+]
+
+[project.scripts]
+rss2notion = "rss2notion.__main__:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

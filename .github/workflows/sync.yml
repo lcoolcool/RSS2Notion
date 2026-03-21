@@ -1,0 +1,33 @@
+name: RSS Sync
+
+on:
+  schedule:
+    - cron: '0 * * * *'   # 每小时整点运行
+  workflow_dispatch:        # 支持手动触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15    # 防止异常时无限运行
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python
+        run: uv python install
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Run RSS sync
+        env:
+          NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
+          NOTION_ENTRIES_DATABASE_ID: ${{ secrets.NOTION_ENTRIES_DATABASE_ID }}
+          NOTION_FEEDS_DATABASE_ID: ${{ secrets.NOTION_FEEDS_DATABASE_ID }}
+          TIMEZONE: ${{ vars.TIMEZONE || 'Asia/Shanghai' }}
+          CLEANUP_DAYS: ${{ vars.CLEANUP_DAYS || '30' }}
+        run: uv run python -m rss2notion
