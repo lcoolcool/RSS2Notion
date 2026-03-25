@@ -97,7 +97,7 @@ https://www.notion.so/your-workspace/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx?v=...
 | Variable 名称 | 默认值 | 说明 |
 |--------------|--------|------|
 | `TIMEZONE` | `Asia/Shanghai` | 时区，使用 [IANA 格式](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) |
-| `CLEANUP_DAYS` | `30` | 自动清理 Unread 文章的保留天数，`-1` 禁用清理 |
+| `CLEANUP_DAYS` | `30` | 保留天数（双重作用）：① 首次运行时只导入最近 N 天的文章；② 定期清理超过 N 天的 Unread 文章。设为 `-1` 则首次导入全部历史数据且禁用自动清理 |
 
 ### 步骤 5：启用 GitHub Actions 并手动触发
 
@@ -127,7 +127,7 @@ https://www.notion.so/your-workspace/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx?v=...
 | `NOTION_ARTICLES_DATABASE_ID` | ✅ | — | 阅读数据库 ID |
 | `NOTION_FEEDS_DATABASE_ID` | ✅ | — | 订阅数据库 ID |
 | `TIMEZONE` | — | `Asia/Shanghai` | IANA 时区名称 |
-| `CLEANUP_DAYS` | — | `30` | Unread 文章保留天数，`-1` 禁用自动清理 |
+| `CLEANUP_DAYS` | — | `30` | 保留天数（双重作用）：① 首次运行只导入最近 N 天；② 定期清理超过 N 天的 Unread 文章。`-1` 则导入全部历史数据且禁用自动清理 |
 
 ---
 

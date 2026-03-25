@@ -4,7 +4,7 @@
 
 import logging
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from .config import Config
 from .converter import entry_to_notion_blocks
@@ -52,14 +52,25 @@ def run(config: Config) -> None:
 
         entries = feed_result.entries
 
-        # 用 LastUpdate 时间过滤：只处理新文章
+        # 时间粗筛：减少进入 URL 去重阶段的条目数
         if subscription.last_update:
+            # 非首次运行：取 LastUpdate 当天零点作为边界，配合 URL 去重保证正确性
+            # 截断到天而非精确时间，使当天内写入失败的文章下次仍可重试
+            date_part = subscription.last_update[:10]
+            tz_part = subscription.last_update[19:] if len(subscription.last_update) > 19 else ""
+            cutoff = f"{date_part}T00:00:00{tz_part}"
             before_filter = len(entries)
-            entries = [
-                e for e in entries
-                if not e.published or e.published > subscription.last_update
-            ]
-            log.info(f"  时间过滤：{before_filter} → {len(entries)} 条新文章")
+            entries = [e for e in entries if e.published >= cutoff]
+            log.info(f"  时间粗筛（{date_part} 起）：{before_filter} → {len(entries)} 条")
+        elif config.cleanup_days >= 0:
+            # 首次运行：默认只导入 cleanup_days 天内的文章，避免历史数据全量涌入
+            cutoff = (datetime.now(config.timezone) - timedelta(days=config.cleanup_days)).isoformat()
+            before_filter = len(entries)
+            entries = [e for e in entries if e.published >= cutoff]
+            log.info(f"  首次运行，导入最近 {config.cleanup_days} 天：{before_filter} → {len(entries)} 条")
+        else:
+            # cleanup_days=-1：首次运行写入全部历史数据
+            log.info(f"  首次运行，导入全部历史数据（{len(entries)} 条）")
 
         if not entries:
             log.info("  没有新文章，跳过")
@@ -138,7 +149,6 @@ def run(config: Config) -> None:
         total_skipped += skipped
         total_failed += failed
 
-        # 更新订阅状态
         update_subscription_status(
             client, subscription,
             status="Active",

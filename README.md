@@ -95,7 +95,7 @@ https://www.notion.so/your-workspace/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx?v=...
 | Variable Name | Default | Description |
 |--------------|---------|-------------|
 | `TIMEZONE` | `Asia/Shanghai` | Timezone in [IANA format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) |
-| `CLEANUP_DAYS` | `30` | Retention days for Unread articles; set to `-1` to disable auto cleanup |
+| `CLEANUP_DAYS` | `30` | Dual-purpose: ① on first run, only import articles from the last N days; ② periodically delete Unread articles older than N days. Set to `-1` to import all history on first run and disable auto cleanup |
 
 ### Step 5: Enable GitHub Actions and Run Manually
 
@@ -125,7 +125,7 @@ After that, the sync will run automatically every hour.
 | `NOTION_ARTICLES_DATABASE_ID` | ✅ | — | Reading Database ID |
 | `NOTION_FEEDS_DATABASE_ID` | ✅ | — | Subscription Database ID |
 | `TIMEZONE` | — | `Asia/Shanghai` | IANA timezone name |
-| `CLEANUP_DAYS` | — | `30` | Unread article retention days; `-1` disables auto cleanup |
+| `CLEANUP_DAYS` | — | `30` | Dual-purpose: ① first run imports only the last N days; ② auto-deletes Unread articles older than N days. `-1` imports all history and disables cleanup |
 
 ---
 

@@ -50,7 +50,7 @@ def update_subscription_status(
     feed_title: str | None = None,
 ) -> None:
     """
-    更新订阅的 Status 和 LastUpdate。
+    更新订阅的 Status 和 LastUpdate（始终更新为当前运行时间）。
     如果订阅的 Name 为空且 feed_title 不为空，自动回填站点名。
     """
     now_iso = datetime.now(tz).isoformat()

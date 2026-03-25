@@ -14,19 +14,23 @@ log = logging.getLogger(__name__)
 
 
 def parse_date(raw: str, tz: ZoneInfo) -> str:
-    """将 RSS 日期字符串解析为带时区的 ISO 格式"""
-    for fmt in (
-        "%a, %d %b %Y %H:%M:%S %z",
-        "%a, %d %b %Y %H:%M:%S GMT",
-        "%Y-%m-%dT%H:%M:%S%z",
-        "%Y-%m-%dT%H:%M:%SZ",
-    ):
+    """将 RSS 日期字符串解析为带时区的 ISO 格式，统一转换到配置时区"""
+    # (格式字符串, 解析出的 naive datetime 所对应的时区)
+    # GMT/Z 后缀代表 UTC；无时区信息则使用配置时区
+    _UTC = timezone.utc
+    formats = [
+        ("%a, %d %b %Y %H:%M:%S %z", None),   # 自带时区，直接用
+        ("%a, %d %b %Y %H:%M:%S GMT", _UTC),   # GMT = UTC
+        ("%Y-%m-%dT%H:%M:%S%z",       None),   # 自带时区，直接用
+        ("%Y-%m-%dT%H:%M:%SZ",        _UTC),   # Z = UTC
+    ]
+    for fmt, fallback_tz in formats:
         try:
             dt = datetime.strptime(raw, fmt)
-            # 无时区信息时，使用配置时区
             if dt.tzinfo is None:
-                dt = dt.replace(tzinfo=tz)
-            return dt.isoformat()
+                dt = dt.replace(tzinfo=fallback_tz or tz)
+            # 统一转到配置时区，确保后续字符串比较等价于时间比较
+            return dt.astimezone(tz).isoformat()
         except (ValueError, TypeError):
             continue
     # 无法解析时使用当前时间
