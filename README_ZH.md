@@ -182,7 +182,8 @@ uv run python -m rss2notion
 
 ## 🙏 致谢
 
-- [lcoolcool/notion-rss-reader](https://github.com/lcoolcool/notion-rss-reader) — 灵感参考
+- [watsuyo/notion-rss-reader](https://github.com/watsuyo/notion-rss-reader) — 灵感参考
+- [Yutu0k/RSS-to-Notion](https://github.com/Yutu0k/RSS-to-Notion) — 灵感参考
 - [feedparser](https://github.com/kurtmckee/feedparser) — RSS 解析
 - [mistletoe](https://github.com/miyuchina/mistletoe) — Markdown AST 解析
 - [markdownify](https://github.com/matthewwithanm/python-markdownify) — HTML 转 Markdown
