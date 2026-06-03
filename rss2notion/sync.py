@@ -157,7 +157,10 @@ def run(config: Config) -> None:
         )
 
     # 自动清理过期文章
-    cleanup_expired_articles(client, config.entries_database_id, config.cleanup_days, config.timezone)
+    try:
+        cleanup_expired_articles(client, config.entries_database_id, config.cleanup_days, config.timezone)
+    except Exception as e:
+        log.error(f"自动清理失败: {e}")
 
     log.info(
         f"\n全部完成 — 写入: {total_written}  跳过: {total_skipped}  失败: {total_failed}"

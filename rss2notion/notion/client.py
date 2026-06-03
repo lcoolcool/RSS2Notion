@@ -26,7 +26,7 @@ class NotionClient:
         url = f"{self.BASE}{path}"
         for attempt in range(1, self.retry_times + 1):
             try:
-                resp = requests.request(method, url, headers=self.headers, **kwargs)
+                resp = requests.request(method, url, headers=self.headers, timeout=30, **kwargs)
                 if resp.status_code == 429:
                     wait = float(resp.headers.get("Retry-After", self.retry_delay))
                     log.warning(f"触发速率限制，等待 {wait}s …")
@@ -36,6 +36,11 @@ class NotionClient:
                 return resp.json()
             except requests.HTTPError as e:
                 log.error(f"HTTP 错误 [{attempt}/{self.retry_times}]: {e.response.text}")
+                if attempt == self.retry_times:
+                    raise
+                time.sleep(self.retry_delay)
+            except requests.RequestException as e:
+                log.error(f"网络错误 [{attempt}/{self.retry_times}]: {e}")
                 if attempt == self.retry_times:
                     raise
                 time.sleep(self.retry_delay)
