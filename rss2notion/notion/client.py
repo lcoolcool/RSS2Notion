@@ -130,7 +130,7 @@ class NotionClient:
 
     def delete_page(self, page_id: str) -> dict:
         """将页面移入回收站（30 天内可在 Notion 回收站恢复）"""
-        return self._request("DELETE", f"/pages/{page_id}")
+        return self._request("PATCH", f"/pages/{page_id}", json={"archived": True})
 
 
 # ─────────────────────────────────────────────

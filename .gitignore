@@ -14,6 +14,7 @@ build/
 
 # 环境变量
 .env
+CLAUDE.md
 
 # 系统文件
 .DS_Store
